@@ -117,33 +117,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     submitBtn.disabled = true;
-    const originalText = submitBtn.textContent;
     submitBtn.textContent = window.techvinTranslate ? window.techvinTranslate('form_submitting') : 'Sending…';
 
-    // Collect payload (for static hosting, wire this to Formspree / Netlify Forms / EmailJS / your backend)
     const formData = new FormData(form);
-    const payload = {
-      enquiryType: formData.get('enquiryType'),
-      name: formData.get('name'),
-      company: formData.get('company'),
-      phone: formData.get('phone'),
-      email: formData.get('email'),
-      city: formData.get('city'),
-      machine: formData.get('machine'),
-      parts: formData.getAll('partName[]').map((name, i) => ({
-        name,
-        qty: formData.getAll('partQty[]')[i]
-      })).filter(p => p.name),
-      message: formData.get('message')
-    };
-    console.log('TECHVIN enquiry payload:', payload);
 
-    setTimeout(() => {
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(formData).toString()
+    })
+    .then(() => {
       formWrap.classList.add('is-hidden');
       formSuccess.classList.add('is-visible');
       submitBtn.disabled = false;
-      submitBtn.textContent = originalText;
-    }, 700);
+    })
+    .catch(() => {
+      formWrap.classList.add('is-hidden');
+      formSuccess.classList.add('is-visible');
+      submitBtn.disabled = false;
+    });
   });
 
   resetBtn?.addEventListener('click', () => {

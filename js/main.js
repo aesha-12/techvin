@@ -18,17 +18,35 @@ document.addEventListener('DOMContentLoaded', () => {
   const burger = document.querySelector('.burger');
   const navLinks = document.querySelector('.nav-links');
   if (burger && navLinks) {
+    const setMenuState = (isOpen) => {
+      burger.classList.toggle('is-open', isOpen);
+      navLinks.classList.toggle('is-open', isOpen);
+      document.body.classList.toggle('menu-open', isOpen);
+      burger.setAttribute('aria-expanded', String(isOpen));
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    };
+
     burger.addEventListener('click', () => {
-      burger.classList.toggle('is-open');
-      navLinks.classList.toggle('is-open');
-      document.body.style.overflow = navLinks.classList.contains('is-open') ? 'hidden' : '';
+      const shouldOpen = !navLinks.classList.contains('is-open');
+      setMenuState(shouldOpen);
     });
+
     navLinks.querySelectorAll('a').forEach(link => {
-      link.addEventListener('click', () => {
-        burger.classList.remove('is-open');
-        navLinks.classList.remove('is-open');
-        document.body.style.overflow = '';
-      });
+      link.addEventListener('click', () => setMenuState(false));
+    });
+
+    document.addEventListener('click', (event) => {
+      const clickedInsideMenu = navLinks.contains(event.target);
+      const clickedToggle = burger.contains(event.target);
+      if (!clickedInsideMenu && !clickedToggle && navLinks.classList.contains('is-open')) {
+        setMenuState(false);
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && navLinks.classList.contains('is-open')) {
+        setMenuState(false);
+      }
     });
   }
 
@@ -45,6 +63,166 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
     revealEls.forEach(el => io.observe(el));
   }
+
+  /* ── DISCOVERY SELECTOR ── */
+  const discoveryState = {
+    technology: 'airjet',
+    fabric: 'cotton',
+    need: 'speed'
+  };
+
+  const discoveryProfiles = {
+    airjet: {
+      cotton: {
+        speed: {
+          name: 'Airjet Loom',
+          copy: 'Ideal for cotton, blended and fast-turnaround fabric runs where consistent speed matters.',
+          items: ['High-output weaving', 'Suitable for multiple fabric types', 'Parts and support available']
+        },
+        heavy: {
+          name: 'Heavy Airjet Loom',
+          copy: 'Recommended for heavier cotton and wider fabric runs where stable registration and repeatability matter.',
+          items: ['Heavy cotton handling', 'Wide fabric suitability', 'Frame strength for long runs']
+        },
+        versatile: {
+          name: 'Airjet Loom Range',
+          copy: 'A flexible option for mills balancing fibre variety, output demands and easier machine selection.',
+          items: ['Broad weaving range', 'Practical production flexibility', 'Support-led configuration']
+        }
+      },
+      synthetic: {
+        speed: {
+          name: 'Airjet Loom',
+          copy: 'A strong fit for quick-turn synthetic and blended production where speed and efficiency are priorities.',
+          items: ['Fast output', 'Blended fabric support', 'Efficient operation']
+        },
+        heavy: {
+          name: 'Heavy Airjet Loom',
+          copy: 'A dependable choice for denser synthetic and mixed-fibre runs requiring machine stability.',
+          items: ['Dense fabric support', 'Stable high-load performance', 'Production continuity']
+        },
+        versatile: {
+          name: 'Airjet Loom',
+          copy: 'Flexible for mills needing a balanced airjet platform across multiple product lines.',
+          items: ['Flexible applications', 'Multiple fabric use', 'Strong parts availability']
+        }
+      },
+      technical: {
+        speed: {
+          name: 'Airjet Loom',
+          copy: 'Useful for technical fabric applications where steady output and machine tuning are essential.',
+          items: ['Controlled production', 'Targeted fabric fit', 'Technical support available']
+        },
+        heavy: {
+          name: 'Heavy Airjet Loom',
+          copy: 'A practical option for heavier technical textiles demanding strength and repeatability.',
+          items: ['Higher stability', 'Denser fabric capability', 'Long-run suitability']
+        },
+        versatile: {
+          name: 'Airjet Loom Range',
+          copy: 'A good fit when the factory needs an adaptable airjet platform across several fabric families.',
+          items: ['Multi-fabric support', 'Balanced performance', 'Service-backed operation']
+        }
+      }
+    },
+    waterjet: {
+      cotton: {
+        speed: {
+          name: 'Waterjet Loom',
+          copy: 'Best suited to synthetic and filament-heavy output where smooth weaving remains the key priority.',
+          items: ['Efficient synthetic runs', 'Smooth fabric output', 'Fast adjustment support']
+        },
+        heavy: {
+          name: 'Heavy Waterjet Loom',
+          copy: 'Recommended for dense, heavier synthetic fabric requirements and high-volume production runs.',
+          items: ['Heavy fabric support', 'Stable operation', 'High-volume output']
+        },
+        versatile: {
+          name: 'Waterjet Loom Range',
+          copy: 'Favoured when the mill wants a practical platform for various synthetic and blended production setups.',
+          items: ['Flexible fabric handling', 'Reliable support', 'Production continuity']
+        }
+      },
+      synthetic: {
+        speed: {
+          name: 'Waterjet Loom',
+          copy: 'A direct fit for synthetic and filament-heavy weaving lines centred on speed and continuity.',
+          items: ['Synthetic-focused output', 'High-efficiency weaving', 'Lower downtime risk']
+        },
+        heavy: {
+          name: 'Heavy Waterjet Loom',
+          copy: 'Built for heavier synthetic cloth and wide output requirements where stability remains critical.',
+          items: ['Heavy synthetic capacity', 'Wide fabric production', 'Consistency under load']
+        },
+        versatile: {
+          name: 'Waterjet Loom Range',
+          copy: 'Useful for mills seeking versatility across multiple synthetic fabric programmes.',
+          items: ['Wide application fit', 'Stable output', 'Service support']
+        }
+      },
+      technical: {
+        speed: {
+          name: 'Waterjet Loom',
+          copy: 'A practical recommendation for technical synthetic fabrics where output consistency matters.',
+          items: ['Technical fabric fit', 'Smooth output', 'Sustained weaving performance']
+        },
+        heavy: {
+          name: 'Heavy Waterjet Loom',
+          copy: 'Well suited to technical textile jobs that need stronger mechanical stability and heavier fabric support.',
+          items: ['Stronger fabric handling', 'Stable heavy runs', 'Production-focused fit']
+        },
+        versatile: {
+          name: 'Waterjet Loom Range',
+          copy: 'A flexible choice for diversified technical and synthetic programmes with ongoing support needs.',
+          items: ['Multi-programme fit', 'Stable production', 'Spare support']
+        }
+      }
+    }
+  };
+
+  function updateDiscovery() {
+    const card = document.querySelector('.match-card');
+    if (!card) return;
+    const profile = discoveryProfiles[discoveryState.technology]?.[discoveryState.fabric]?.[discoveryState.need];
+    if (!profile) return;
+
+    card.querySelector('[data-match-name]').textContent = profile.name;
+    card.querySelector('[data-match-copy]').textContent = profile.copy;
+
+    profile.items.forEach((item, idx) => {
+      const target = card.querySelector(`[data-match-item="${idx + 1}"]`);
+      if (target) target.textContent = item;
+    });
+  }
+
+  document.querySelectorAll('[data-discovery-group]').forEach(group => {
+    const options = group.querySelectorAll('[data-discovery-option]');
+    const groupKey = group.getAttribute('data-discovery-group');
+
+    options.forEach(option => {
+      option.addEventListener('click', () => {
+        options.forEach(btn => btn.classList.toggle('is-active', btn === option));
+        discoveryState[groupKey] = option.getAttribute('data-discovery-option');
+        updateDiscovery();
+      });
+    });
+  });
+
+  updateDiscovery();
+
+  /* ── APPLICATION CHIPS ── */
+  const appChips = document.querySelectorAll('.app-chip');
+  const appPanels = document.querySelectorAll('[data-app-content]');
+
+  appChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const selected = chip.getAttribute('data-app');
+      appChips.forEach(btn => btn.classList.toggle('is-active', btn === chip));
+      appPanels.forEach(panel => {
+        panel.classList.toggle('is-active', panel.getAttribute('data-app-content') === selected);
+      });
+    });
+  });
 
   /* ── ACCORDION (used on products / spares pages) ── */
   document.querySelectorAll('[data-accordion-trigger]').forEach(trigger => {
@@ -131,54 +309,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.key === 'ArrowRight') showNext(1);
       if (e.key === 'ArrowLeft') showNext(-1);
     });
-  }
-
-  /* ── WEAVE CANVAS (hero background motif) ── */
-  const canvas = document.getElementById('weaveCanvas');
-  if (canvas && canvas.getContext) {
-    const ctx = canvas.getContext('2d');
-    let w, h, raf;
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-    function resize() {
-      w = canvas.width = canvas.offsetWidth * window.devicePixelRatio;
-      h = canvas.height = canvas.offsetHeight * window.devicePixelRatio;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    const spacing = 46 * window.devicePixelRatio;
-    let t = 0;
-
-    function draw() {
-      ctx.clearRect(0, 0, w, h);
-      ctx.strokeStyle = 'rgba(0,174,239,0.35)';
-      ctx.lineWidth = 1 * window.devicePixelRatio;
-
-      // Warp (vertical) threads
-      for (let x = -spacing; x < w + spacing; x += spacing) {
-        const offset = Math.sin((x / spacing) + t) * 6 * window.devicePixelRatio;
-        ctx.beginPath();
-        ctx.moveTo(x + offset, 0);
-        ctx.lineTo(x - offset, h);
-        ctx.stroke();
-      }
-      // Weft (horizontal) threads
-      ctx.strokeStyle = 'rgba(26,95,190,0.30)';
-      for (let y = -spacing; y < h + spacing; y += spacing) {
-        const offset = Math.cos((y / spacing) + t) * 6 * window.devicePixelRatio;
-        ctx.beginPath();
-        ctx.moveTo(0, y + offset);
-        ctx.lineTo(w, y - offset);
-        ctx.stroke();
-      }
-
-      if (!reducedMotion) {
-        t += 0.0035;
-        raf = requestAnimationFrame(draw);
-      }
-    }
-    draw();
   }
 
   /* ── COUNTER ANIMATION (stat numbers) ── */
